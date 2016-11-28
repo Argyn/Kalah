@@ -12,20 +12,26 @@ public class KalahAlphaBetaMiniMax {
                                   int alpha,
                                   int beta,
                                   boolean maximizingPlayer) throws Exception {
-    if(depth == 0) {
-      return new OptimizeResult(board.getTotalNumberOfSeeds(side.opposite())
-                                - board.getTotalNumberOfSeeds(side));
+    if(depth == 0 || kalah.gameOver(board)) {
+      int result = board.getTotalNumberOfSeeds(side.opposite()) - board.getTotalNumberOfSeeds(side);
+      if(maximizingPlayer) {
+        result = Math.abs(result);
+      }
+
+      return new OptimizeResult(result);
     }
 
     int bestValue = 0;
     int bestHole = 0;
-    Board currentBoard = board.clone();
     if(maximizingPlayer) {
       bestValue = Integer.MIN_VALUE;
       for(int playHole=1; playHole<=board.getNoOfHoles(); playHole++) {
-        //System.out.println("Playing hole = " + playHole);
-        kalah.makeMove(currentBoard, new Move(side, playHole));
-        OptimizeResult result = alphaBeta(kalah, currentBoard, side.opposite(), depth-1, alpha, beta, false);
+        if(board.getSeeds(side, playHole) == 0)
+          continue;
+
+        Board currentBoard = board.clone();
+        Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
+        OptimizeResult result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, side == newSide);
         if(result.score > bestValue) {
           bestValue = result.score;
           bestHole = playHole;
@@ -38,9 +44,13 @@ public class KalahAlphaBetaMiniMax {
     } else {
       bestValue = Integer.MAX_VALUE;
       for(int playHole=1; playHole<=board.getNoOfHoles(); playHole++) {
+        if(board.getSeeds(side, playHole) == 0)
+          continue;
+
+        Board currentBoard = board.clone();
         //System.out.println("Opp playing move = "+playHole);
-        kalah.makeMove(currentBoard, new Move(side, playHole));
-        OptimizeResult result = alphaBeta(kalah, currentBoard, side.opposite(), depth-1, alpha, beta, true);
+        Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
+        OptimizeResult result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, side == newSide);
         if(result.score < bestValue) {
           bestValue = result.score;
           bestHole = result.hole;

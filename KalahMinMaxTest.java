@@ -29,7 +29,7 @@ public class KalahMinMaxTest {
           continue;
         }
 
-        OptimizeResult result = miniMaxer.optimizeNextMove(kalah, board, side, 4);
+        OptimizeResult result = miniMaxer.optimizeNextMove(kalah, board, side, 14);
         System.out.println(String.format(side.name()+" : Playing hole %d, with score %d", result.hole, result.score));
         side = kalah.makeMove(new Move(side, result.hole));
         System.out.println(board);
