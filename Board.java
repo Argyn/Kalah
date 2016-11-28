@@ -266,6 +266,15 @@ public class Board extends Observable implements Cloneable
     	this.setChanged();
     }
 
+		public int getNumbersOfSeedsInPits(Side side) {
+			int result = 0;
+			for(int hole=1; hole<=holes; hole++) {
+				result += getSeeds(side, hole);
+			}
+
+			return result;
+		}
+
 		public int getTotalNumberOfSeeds(Side side) {
 			int result = getSeedsInStore(side);
 			for(int hole=1; hole<=holes; hole++) {

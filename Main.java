@@ -54,6 +54,8 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		// TODO: implement
+    if(Protocol.interpretStartMsg(recvMsg())) {
+      System.out.println("We are starting");
+    }
 	}
 }
