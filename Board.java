@@ -1,4 +1,3 @@
-package MKAgent;
 import java.util.Observable;
 
 /**
@@ -54,7 +53,7 @@ public class Board extends Observable implements Cloneable
 
     /**
      * Creates a new board.
-     * 
+     *
      * @param holes The number of holes per side (must be >= 1).
      * @param seeds The initial number of seeds per hole (must be >= 0). The
      *        stores are empty initially.
@@ -77,7 +76,7 @@ public class Board extends Observable implements Cloneable
     		board[SOUTH_ROW][i] = seeds;
     	}
     }
-    
+
 	/**
      * Creates a new board as the copy of a given one. Both copies can then be
      * altered independently.
@@ -100,7 +99,7 @@ public class Board extends Observable implements Cloneable
     /**
      * Creates a copy of the current board. Both copies can then be altered
      * independently.
-     *  
+     *
      * @see java.lang.Object#clone()
      * @see #Board(Board)
      */
@@ -186,7 +185,7 @@ public class Board extends Observable implements Cloneable
 
     	return board[1-indexOfSide(side)][holes+1-hole];
     }
- 
+
     /**
      * Sets the number of seeds in a hole opposite to a given one.
      * @param side The side the given hole is located on.
@@ -267,20 +266,28 @@ public class Board extends Observable implements Cloneable
     	this.setChanged();
     }
 
-	@Override
-	public String toString()
-	{
-		StringBuilder boardString = new StringBuilder();
+		public int getTotalNumberOfSeeds(Side side) {
+			int result = getSeedsInStore(side);
+			for(int hole=1; hole<=holes; hole++) {
+				result += getSeeds(side, hole);
+			}
 
-		boardString.append(board[NORTH_ROW][0] + "  --");
-		for (int i=holes; i >= 1; i--)
-			boardString.append("  " + board[NORTH_ROW][i]);
-		boardString.append("\n");
-		for (int i=1; i <= holes; i++)
-			boardString.append(board[SOUTH_ROW][i] + "  ");
-		boardString.append("--  " + board[SOUTH_ROW][0] + "\n");
+			return result;
+		}
 
-		return boardString.toString();
-	}
+		@Override
+		public String toString()
+		{
+			StringBuilder boardString = new StringBuilder();
+
+			boardString.append(board[NORTH_ROW][0] + "  --");
+			for (int i=holes; i >= 1; i--)
+				boardString.append("  " + board[NORTH_ROW][i]);
+			boardString.append("\n");
+			for (int i=1; i <= holes; i++)
+				boardString.append(board[SOUTH_ROW][i] + "  ");
+			boardString.append("--  " + board[SOUTH_ROW][0] + "\n");
+
+			return boardString.toString();
+		}
 }
-
