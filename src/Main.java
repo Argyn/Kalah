@@ -1,3 +1,4 @@
+package MKAgent;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -54,8 +55,38 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-    if(Protocol.interpretStartMsg(recvMsg())) {
-      System.out.println("We are starting");
-    }
+    // create board
+    // Board board = new Board(7,7);
+    //
+    // // create Kalah
+    // Kalah kalah = new Kalah(board);
+    // KalahAlphaBetaMiniMax optimizer = new KalahAlphaBetaMiniMax();
+    // Side mySide = Side::SOUTH;
+    // Side turn = Side::SOUTH;
+    //
+    // try {
+    //   String currentMessage = recvMsg();
+    //   if(Protocol.getMessageType(currentMessage) == MsgType.START
+    //       && !Protocol.interpretStartMsg(currentMessage)) {
+    //     side = Side::NORTH;
+    //     turn = side;
+    //   }
+    //
+    //   int playHole = 0;
+    //   while(!kalah.gameOver()) {
+    //     // if its my turn
+    //     if(turn == mySide) {
+    //       OptimizeResult result = optimizer.optimizeNextMove(kalah, board, mySide);
+    //       sendMsg(Protocol.createMoveMsg(result.hole));
+    //     }
+    //
+    //     if(currentSide == Side::SOUTH) {
+    //       OptimizeResult result = optimizer.optimizeNextMove(kalah, board, Side::SOUTH);
+    //
+    //     }
+    //   }
+    // } catch(Exception e) {
+    //   e.printStackTrace();
+    // }
 	}
 }

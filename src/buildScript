@@ -1,0 +1,10 @@
+#!/bin/bash
+BUILD_DIRECTORY=../build
+if [ -d $BUIILD_DIRECTORY ]; then
+	rm -rf $BUILD_DIRECTORY
+fi
+
+mkdir $BUILD_DIRECTORY
+javac -d ../build *.java
+
+jar cvmf META-INF/MANIFEST.mf ../build/MKAgent.jar ../build/MKAgent/*.class

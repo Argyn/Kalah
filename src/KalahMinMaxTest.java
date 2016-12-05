@@ -1,3 +1,5 @@
+package MKAgent;
+
 import java.util.Scanner;
 
 public class KalahMinMaxTest {

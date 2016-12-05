@@ -1,3 +1,5 @@
+package MKAgent;
+
 public class KalahMiniMax {
 
   public KalahMiniMax() {

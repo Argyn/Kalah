@@ -1,3 +1,5 @@
+package MKAgent;
+
 public class OptimizeResult {
   public int hole;
   public int score;

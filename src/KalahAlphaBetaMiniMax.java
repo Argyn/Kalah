@@ -1,3 +1,5 @@
+package MKAgent;
+
 public class KalahAlphaBetaMiniMax {
 
 
@@ -5,14 +7,21 @@ public class KalahAlphaBetaMiniMax {
 
   }
 
-  public int evaluateBoard(Board board, Side side, boolean maximizing) {
+  private int evaluateBoard2(Board board, Side side, boolean maximizing) {
+    int kalahsDiff = board.getSeedsInStore(side.opposite()) - board.getSeedsInStore(side);
+    int seedsDiff = board.getNumbersOfSeedsInPits(side.opposite()) - board.getNumbersOfSeedsInPits(side);
+
+    return kalahsDiff*2 + seedsDiff;
+  }
+
+  private int evaluateBoard(Board board, Side side, boolean maximizing) {
     int kalahsDiff = board.getSeedsInStore(Side.SOUTH) - board.getSeedsInStore(Side.NORTH);
     int seedsDiff = board.getNumbersOfSeedsInPits(Side.SOUTH) - board.getNumbersOfSeedsInPits(Side.NORTH);
 
     return kalahsDiff*2 + seedsDiff;
   }
 
-  public OptimizeResult alphaBeta(Kalah kalah,
+  private OptimizeResult alphaBeta(Kalah kalah,
                                   Board board,
                                   Side side,
                                   int depth,
