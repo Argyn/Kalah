@@ -4,9 +4,9 @@ public class OptimizeResult {
   public int hole;
   public int score;
 
-  public OptimizeResult(int hole, int result) {
+  public OptimizeResult(int hole, int score) {
     this.hole = hole;
-    this.score = result;
+    this.score = score;
   }
 
   public OptimizeResult(int score) {

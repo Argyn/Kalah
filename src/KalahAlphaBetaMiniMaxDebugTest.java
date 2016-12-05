@@ -2,7 +2,7 @@ package MKAgent;
 
 import java.util.Scanner;
 
-public class KalahAlphaBetaMiniMaxTest {
+public class KalahAlphaBetaMiniMaxDebugTest {
 
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
@@ -18,7 +18,8 @@ public class KalahAlphaBetaMiniMaxTest {
     Kalah kalah = new Kalah(board);
 
 
-    KalahAlphaBetaMiniMax alphaBeta = new KalahAlphaBetaMiniMax(Side.SOUTH);
+    KalahAlphaBetaMiniMaxDebug alphaBeta = new KalahAlphaBetaMiniMaxDebug(Side.SOUTH);
+
     try {
       Side playerSide = Side.SOUTH;
       Side side = Side.SOUTH;
@@ -31,7 +32,7 @@ public class KalahAlphaBetaMiniMaxTest {
           continue;
         }
 
-        OptimizeResult result = alphaBeta.optimizeNextMove(kalah, board, side, 12);
+        OptimizeResult result = alphaBeta.optimizeNextMove(kalah, board, side, 2);
         System.out.println(String.format(side.name()+" : Playing hole %d, with score %d", result.hole, result.score));
         side = kalah.makeMove(new Move(side, result.hole));
         System.out.println(board);

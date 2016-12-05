@@ -1,12 +1,12 @@
 package MKAgent;
 
-public class KalahAlphaBetaMiniMax {
+public class KalahAlphaBetaMiniMaxDebug {
 
   private BoardEvaluator evaluator;
 
   private Side mySide;
 
-  public KalahAlphaBetaMiniMax(Side side) {
+  public KalahAlphaBetaMiniMaxDebug(Side side) {
     this.mySide = side;
     evaluator = new MancalaDiffEvaluator();
   }
@@ -25,6 +25,7 @@ public class KalahAlphaBetaMiniMax {
     int bestValue = 0;
     int bestHole = 0;
     if(maximizingPlayer) {
+      System.out.println("MAXIMIZING");
       bestValue = Integer.MIN_VALUE;
       for(int playHole=1; playHole<=board.getNoOfHoles(); playHole++) {
         if(board.getSeeds(side, playHole) == 0)
@@ -32,7 +33,16 @@ public class KalahAlphaBetaMiniMax {
 
         Board currentBoard = board.clone();
         Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
+
+        System.out.println(String.format("MAXIMIZING: Playing hole: %d", playHole));
+        System.out.println(currentBoard);
+
+        if(side == newSide) {
+          System.out.println("Got extra move, MAXIMIZING again");
+        }
+
         OptimizeResult result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, ((side == newSide) ? true : false));
+
         if(result.score > bestValue) {
           bestValue = result.score;
           bestHole = playHole;
@@ -44,12 +54,18 @@ public class KalahAlphaBetaMiniMax {
       }
     } else {
       bestValue = Integer.MAX_VALUE;
+
+      System.out.println("MINIMIZING");
       for(int playHole=1; playHole<=board.getNoOfHoles(); playHole++) {
         if(board.getSeeds(side, playHole) == 0)
           continue;
 
         Board currentBoard = board.clone();
         Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
+
+        System.out.println(String.format("MINIMIZING: Playing hole: %d", playHole));
+        System.out.println(currentBoard);
+
         OptimizeResult result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, ((side == newSide) ? false : true));
         if(result.score < bestValue) {
           bestValue = result.score;
