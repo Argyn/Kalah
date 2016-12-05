@@ -32,12 +32,14 @@ public class KalahAlphaBetaMiniMax {
 
         Board currentBoard = board.clone();
         Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
-        
+
         OptimizeResult result;
-        if(kalah.isFirstMove()) {
+        if(currentBoard.previousMoveWasFirst()) {
+          // pie rule, if we got extra move, do not use it, pass the move
           result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, false);
         }
         else {
+          // either pass the move, or use extra move, depending on the side
           result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, ((side == newSide) ? true : false));
         }
 

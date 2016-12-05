@@ -9,8 +9,6 @@ public class Kalah
      */
     private final Board board;
 
-    private static boolean firstMove = true;
-
     /**
      * @param board The board to play on.
      * @throws NullPointerException if "board" is null.
@@ -25,13 +23,8 @@ public class Kalah
     /**
      * @return The board this object operates on.
      */
-    public Board getBoard ()
-    {
-		return board;
-    }
-
-    public boolean isFirstMove() {
-      return firstMove;
+    public Board getBoard() {
+      return board;
     }
 
     /**
@@ -61,7 +54,6 @@ public class Kalah
      */
     public Side makeMove (Move move)
     {
-      firstMove = false;
     	return makeMove(board, move);
     }
 
@@ -123,8 +115,8 @@ public class Kalah
 		    	collects the most counters is the winner."
 		*/
 
-
     	// pick seeds:
+      board.markMoved();
     	int seedsToSow = board.getSeeds(move.getSide(), move.getHole());
     	board.setSeeds(move.getSide(), move.getHole(), 0);
 

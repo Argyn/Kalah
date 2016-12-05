@@ -5,6 +5,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 /**
  * The main application class. It also provides methods for communication
@@ -49,44 +51,138 @@ public class Main
 		return message.toString();
     }
 
+  public static Side readSideFromStartMsg() throws IOException, InvalidMessageException {
+    String startMsg = recvMsg();
+    if(Protocol.getMessageType(startMsg) != MsgType.START) {
+      StringBuilder builder = new StringBuilder();
+      builder.append("Expected START message. Instead received:");
+      builder.append(startMsg);
+
+      throw new InvalidMessageException(builder.toString());
+    }
+
+    if(Protocol.interpretStartMsg(startMsg)) {
+      return Side.SOUTH;
+    }
+
+    return Side.NORTH;
+  }
+
+  public static Protocol.MoveTurn readStateMsg(Board board) throws IOException, InvalidMessageException {
+    String stateMsg = recvMsg();
+
+    Logger.INSTANCE.info("Received " + stateMsg);
+
+    if(Protocol.getMessageType(stateMsg) != MsgType.STATE) {
+      StringBuilder builder = new StringBuilder();
+      builder.append("Expected STATE message. Instead received:");
+      builder.append(stateMsg);
+
+      throw new InvalidMessageException(builder.toString());
+    }
+
+    return Protocol.interpretStateMsg(stateMsg, board);
+  }
+
+  public static void reportGameResults(Kalah kalah, Side mySide) {
+    Side winner = mySide;
+    Board board = kalah.getBoard();
+    int diff = board.getSeedsInStore(mySide) - board.getSeedsInStore(mySide.opposite());
+    if(diff > 0) {
+      Logger.INSTANCE.info(String.format("Winner: %s. GG WP", winner.name()));
+    } else if(diff < 0){
+      Logger.INSTANCE.info(String.format("Winner: %s =(", winner.name()));
+    } else if(diff == 0) {
+      Logger.INSTANCE.info("Result: Draw");
+    }
+
+    Logger.INSTANCE.info(kalah.getBoard().toString());
+  }
+
 	/**
 	 * The main method, invoked when the program is started.
 	 * @param args Command line arguments.
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws CloneNotSupportedException
 	{
-    // create board
-    // Board board = new Board(7,7);
-    //
-    // // create Kalah
-    // Kalah kalah = new Kalah(board);
-    // KalahAlphaBetaMiniMax optimizer = new KalahAlphaBetaMiniMax();
-    // Side mySide = Side::SOUTH;
-    // Side turn = Side::SOUTH;
-    //
-    // try {
-    //   String currentMessage = recvMsg();
-    //   if(Protocol.getMessageType(currentMessage) == MsgType.START
-    //       && !Protocol.interpretStartMsg(currentMessage)) {
-    //     side = Side::NORTH;
-    //     turn = side;
-    //   }
-    //
-    //   int playHole = 0;
-    //   while(!kalah.gameOver()) {
-    //     // if its my turn
-    //     if(turn == mySide) {
-    //       OptimizeResult result = optimizer.optimizeNextMove(kalah, board, mySide);
-    //       sendMsg(Protocol.createMoveMsg(result.hole));
-    //     }
-    //
-    //     if(currentSide == Side::SOUTH) {
-    //       OptimizeResult result = optimizer.optimizeNextMove(kalah, board, Side::SOUTH);
-    //
-    //     }
-    //   }
-    // } catch(Exception e) {
-    //   e.printStackTrace();
-    // }
+    // create Kalah
+    Kalah kalah = new Kalah(new Board(7,7));
+    Board cloneBoard = kalah.getBoard().clone();
+
+    Side firstToMove = Side.SOUTH;
+    Side mySide = Side.SOUTH;
+    Side turn = firstToMove;
+    boolean prevTurn = false;
+    boolean canSwap = false;
+
+    try {
+      mySide = readSideFromStartMsg();
+
+      canSwap = mySide != firstToMove;
+
+      KalahPlayer player = new KalahPlayer(mySide, kalah);
+
+      while(!kalah.gameOver()) {
+        prevTurn = false;
+
+        if(mySide == turn) {
+          // make move
+          sendMsg(Protocol.createMoveMsg(player.makeMove()));
+          prevTurn = true;
+        }
+
+        // read state msg
+        Protocol.MoveTurn state = readStateMsg(cloneBoard);
+        if(state.end) {
+          break;
+        } else if(state.again) {
+          turn = mySide;
+        } else {
+          turn = mySide.opposite();
+        }
+
+        // if I was not the one who moved previous, then read state message
+        // otherwise, ignore, as we already now the state
+        if(!prevTurn) {
+          // check if opposing player wants to swap
+          // no check if swap is legal, hoping engine handles that
+          if(state.move == -1) {
+            player.swap();
+            mySide = player.side();
+            turn = mySide;
+          } else {
+            // check if we can swap and if should - then do it
+            Logger.INSTANCE.info("Can swap = "+canSwap);
+            if(canSwap) {
+              Logger.INSTANCE.info("Checking if we should swap");
+              if(player.shouldSwap(state.move)) {
+                player.swap();
+                // and make move
+                player.makeMove(state.move);
+                mySide = player.side();
+                turn = mySide.opposite();
+
+                canSwap = false;
+
+                sendMsg(Protocol.createSwapMsg());
+                continue;
+              }
+              // no swap after first move
+              canSwap = false;
+            }
+            // seems like we can't swap, so just accept opponents'move
+            player.opponentMove(state.move);
+          }
+        }
+      }
+
+      reportGameResults(kalah, mySide);
+
+    } catch(Exception e) {
+      StringWriter sw = new StringWriter();
+      e.printStackTrace(new PrintWriter(sw));
+      String exceptionAsString = sw.toString();
+      Logger.INSTANCE.severe(exceptionAsString);
+    }
 	}
 }

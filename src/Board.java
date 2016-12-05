@@ -28,6 +28,8 @@ public class Board extends Observable implements Cloneable
 	 */
 	private final int holes;
 
+	private int numberOfMovesMade;
+
 	/**
 	 * The board data. The first dimension of the array is 2, the second one
 	 * is the number of holes per side plus one. The data for the North side
@@ -96,6 +98,8 @@ public class Board extends Observable implements Cloneable
     		board[NORTH_ROW][i] = original.board[NORTH_ROW][i];
     		board[SOUTH_ROW][i] = original.board[SOUTH_ROW][i];
     	}
+
+			numberOfMovesMade = original.numberOfMovesMade;
     }
 
     /**
@@ -284,6 +288,14 @@ public class Board extends Observable implements Cloneable
 			}
 
 			return result;
+		}
+
+		public void markMoved() {
+			numberOfMovesMade++;
+		}
+
+		public boolean previousMoveWasFirst() {
+			return numberOfMovesMade == 1;
 		}
 
 		@Override
