@@ -32,7 +32,15 @@ public class KalahAlphaBetaMiniMax {
 
         Board currentBoard = board.clone();
         Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
-        OptimizeResult result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, ((side == newSide) ? true : false));
+        
+        OptimizeResult result;
+        if(kalah.isFirstMove()) {
+          result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, false);
+        }
+        else {
+          result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, ((side == newSide) ? true : false));
+        }
+
         if(result.score > bestValue) {
           bestValue = result.score;
           bestHole = playHole;

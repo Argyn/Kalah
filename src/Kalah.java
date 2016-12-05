@@ -9,6 +9,8 @@ public class Kalah
      */
     private final Board board;
 
+    private static boolean firstMove = true;
+
     /**
      * @param board The board to play on.
      * @throws NullPointerException if "board" is null.
@@ -26,6 +28,10 @@ public class Kalah
     public Board getBoard ()
     {
 		return board;
+    }
+
+    public boolean isFirstMove() {
+      return firstMove;
     }
 
     /**
@@ -55,6 +61,7 @@ public class Kalah
      */
     public Side makeMove (Move move)
     {
+      firstMove = false;
     	return makeMove(board, move);
     }
 
