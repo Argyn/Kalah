@@ -8,3 +8,5 @@ mkdir $BUILD_DIRECTORY
 javac -d ../build *.java
 
 jar cvmf META-INF/MANIFEST.mf ../build/MKAgent.jar ../build/MKAgent/*.class
+
+jar cvmf META-INF/MANIFEST_TEST.mf ../build/MKAgentTest.jar ../build/MKAgent/*.class
