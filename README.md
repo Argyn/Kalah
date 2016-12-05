@@ -15,6 +15,7 @@ This heuristics proved to be quite effective as it is aiming to capture as many 
 ###Pie Rule
 
 The pile rule is implemented as follows:
+
 1. If we are moving second, then we check how would we move if we were the opposing player
 2. If we would have made the same move, then we decide to SWAP
 3. Otherwise, we stick up to the previously assigned role
