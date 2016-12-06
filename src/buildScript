@@ -1,12 +1,19 @@
 #!/bin/bash
-BUILD_DIRECTORY=../build
+SRC_DIRECTORY=`pwd`
+BUILD_DIRECTORY=$SRC_DIRECTORY/../build
+
 if [ -d $BUIILD_DIRECTORY ]; then
 	rm -rf $BUILD_DIRECTORY
 fi
 
 mkdir $BUILD_DIRECTORY
-javac -d ../build *.java
 
-jar cvmf META-INF/MANIFEST.mf ../build/MKAgent.jar ../build/MKAgent/*.class
+javac -d $BUILD_DIRECTORY *.java
 
-jar cvmf META-INF/MANIFEST_TEST.mf ../build/MKAgentTest.jar ../build/MKAgent/*.class
+cd $BUILD_DIRECTORY
+
+jar cvmf $SRC_DIRECTORY/META-INF/MANIFEST.mf MKAgent.jar MKAgent/*.class
+
+jar cvmf $SRC_DIRECTORY/META-INF/MANIFEST_TEST.mf MKAgentTest.jar MKAgent/*.class
+
+rm -rf $BUILD_DIRECTORY/MKAgent
