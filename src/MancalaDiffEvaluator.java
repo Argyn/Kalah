@@ -10,7 +10,7 @@ public class MancalaDiffEvaluator implements BoardEvaluator {
     double kalahsDiff = board.getSeedsInStore(side) - board.getSeedsInStore(side.opposite());
     double seedsDiff = board.getNumbersOfSeedsInPits(side) - board.getNumbersOfSeedsInPits(side.opposite());
 
-    return kalahsDiff*2 + seedsDiff;
+    return kalahsDiff*2.8 + seedsDiff*1.2;
   }
 
 }
