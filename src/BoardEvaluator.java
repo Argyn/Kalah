@@ -2,6 +2,6 @@ package MKAgent;
 
 public interface BoardEvaluator {
 
-  int evaluateBoard(Board board, Side side);
+  double evaluateBoard(Board board, Side side);
 
 }

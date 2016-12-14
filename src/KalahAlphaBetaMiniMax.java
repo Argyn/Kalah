@@ -15,14 +15,14 @@ public class KalahAlphaBetaMiniMax {
                                   Board board,
                                   Side side,
                                   int depth,
-                                  int alpha,
-                                  int beta,
+                                  double alpha,
+                                  double beta,
                                   boolean maximizingPlayer) throws Exception {
     if(depth == 0 || kalah.gameOver(board)) {
       return new OptimizeResult(evaluator.evaluateBoard(board, mySide));
     }
 
-    int bestValue = 0;
+    double bestValue = 0;
     int bestHole = 0;
     if(maximizingPlayer) {
       bestValue = Integer.MIN_VALUE;

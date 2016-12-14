@@ -11,7 +11,7 @@ public class KalahPlayer {
   private BoardEvaluator evaluator;
 
   private static final int MAX_DEPTH = 14;
-  private static final int MIN_DEPTH = 12;
+  private static final int MIN_DEPTH = 14;
 
   private int depth;
 
@@ -75,12 +75,12 @@ public class KalahPlayer {
     makeMove(result.hole);
 
     // if we are losing, after this move, search deeper
-    if(evaluator.evaluateBoard(kalah.getBoard(), mySide) < 0) {
-      if(depth+2 <= MAX_DEPTH) {
-        depth+=2;
-        Logger.INSTANCE.info(String.format("Increasing search depth to %d", depth));
-      }
-    }
+    // if( (kalah.getBoard().getSeedsInStore(mySide) - kalah.getBoard().getSeedsInStore(mySide.opposite())) < -5 ) {
+    //   if(depth+2 <= MAX_DEPTH) {
+    //     depth+=2;
+    //     Logger.INSTANCE.info(String.format("Increasing search depth to %d", depth));
+    //   }
+    // }
 
     return result.hole;
   }
