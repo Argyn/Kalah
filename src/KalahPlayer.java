@@ -1,5 +1,7 @@
 package MKAgent;
 
+import java.util.List;
+
 public class KalahPlayer {
 
   private Side mySide;
@@ -10,21 +12,20 @@ public class KalahPlayer {
 
   private BoardEvaluator evaluator;
 
-  private static final int MAX_DEPTH = 14;
-  private static final int MIN_DEPTH = 14;
+  private static final int DEPTH = 14;
 
   private int depth;
 
-  public KalahPlayer(Side side, Kalah kalah) {
+  public KalahPlayer(Side side, Kalah kalah, BoardEvaluator evaluator) {
     this.mySide = side;
     this.kalah = kalah;
-    this.depth = MIN_DEPTH;
-    this.evaluator = new MancalaDiffEvaluator();
+    this.depth = DEPTH;
+    this.evaluator = evaluator;
     initilizeOptimizer();
   }
 
   private void initilizeOptimizer() {
-    this.optimizer = new KalahAlphaBetaMiniMax(mySide);
+    this.optimizer = new KalahAlphaBetaMiniMax(mySide, evaluator);
   }
 
   public Side side() {
@@ -39,20 +40,18 @@ public class KalahPlayer {
 
   public boolean shouldSwap(int move) throws Exception {
     // try being
-    KalahAlphaBetaMiniMax oppOptimizer = new KalahAlphaBetaMiniMax(mySide.opposite());
+    KalahAlphaBetaMiniMax oppOptimizer = new KalahAlphaBetaMiniMax(mySide.opposite(), evaluator);
+
     // see what's the first move I would make if I was going first
     Logger.INSTANCE.info("Checking if we should swap. Impersonating side " + mySide.opposite().name());
     Logger.INSTANCE.info(kalah.getBoard().toString());
-    OptimizeResult result = oppOptimizer.optimizeNextMove(kalah, kalah.getBoard(), mySide.opposite(), depth);
 
-    if(move == result.hole) {
-      Logger.INSTANCE.info("Player: Opposing player plays our strategy, do SWAP");
-      return true;
-    } else {
-      Logger.INSTANCE.info(String.format("Player: No need to SWAP. I would have played %d", result.hole));
-    }
+    List<OptimizedMove> optimizedMoves = oppOptimizer.getOptimizedMoves(kalah,
+                                                                        kalah.getBoard(),
+                                                                        mySide.opposite(),
+                                                                        depth);
 
-    return false;
+    return optimizedMoves.get(0).hole() == move || optimizedMoves.get(1).hole() == move;
   }
 
   public void opponentMove(int move) {
@@ -69,20 +68,34 @@ public class KalahPlayer {
     Logger.INSTANCE.info(kalah.getBoard().toString());
   }
 
-  public int makeMove() throws Exception {
-    OptimizeResult result = optimizer.optimizeNextMove(kalah, kalah.getBoard(), mySide, depth);
+  private OptimizedMove decideNextMove(boolean firstMove) throws Exception{
+    List<OptimizedMove> optimizedMoves = optimizer.getOptimizedMoves(kalah,
+                                                                     kalah.getBoard(),
+                                                                     mySide,
+                                                                     depth);
 
-    makeMove(result.hole);
+    if(firstMove) {
+      // do not take the best move
+      if(optimizedMoves.size() > 2) {
+        Logger.INSTANCE.info("Choosing 2nd best move");
+        return optimizedMoves.get(1);
+      }
+    }
 
-    // if we are losing, after this move, search deeper
-    // if( (kalah.getBoard().getSeedsInStore(mySide) - kalah.getBoard().getSeedsInStore(mySide.opposite())) < -5 ) {
-    //   if(depth+2 <= MAX_DEPTH) {
-    //     depth+=2;
-    //     Logger.INSTANCE.info(String.format("Increasing search depth to %d", depth));
-    //   }
-    // }
+    OptimizedMove nextMove = optimizedMoves.get(0);
+    Logger.INSTANCE.info(String.format("Making move: %d", nextMove.hole()));
 
-    return result.hole;
+    return optimizedMoves.get(0);
+  }
+
+  public int decideAndMakeNextMove(boolean firstMove) throws Exception {
+    OptimizedMove nextMove = decideNextMove(firstMove);
+
+    Logger.INSTANCE.info(String.format("Making move: %d", nextMove.hole()));
+
+    makeMove(nextMove.hole());
+
+    return nextMove.hole();
   }
 
 }

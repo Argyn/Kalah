@@ -1,14 +1,18 @@
 package MKAgent;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class KalahAlphaBetaMiniMax {
 
   private BoardEvaluator evaluator;
 
   private Side mySide;
 
-  public KalahAlphaBetaMiniMax(Side side) {
+  public KalahAlphaBetaMiniMax(Side side, BoardEvaluator evaluator) {
+    this.evaluator = evaluator;
     this.mySide = side;
-    evaluator = new MancalaDiffEvaluator();
   }
 
   private OptimizeResult alphaBeta(Kalah kalah,
@@ -74,6 +78,45 @@ public class KalahAlphaBetaMiniMax {
     }
 
     return new OptimizeResult(bestHole, bestValue);
+  }
+
+  private List<OptimizedMove> doGetOptimizedMoves(Kalah kalah, Board board,
+                                                  Side side, int depth) throws Exception{
+    List<OptimizedMove> optimizedMoves = new ArrayList<>();
+    int alpha = Integer.MIN_VALUE;
+    int beta = Integer.MAX_VALUE;
+
+    // assuming always maximizing
+    for(int playHole=1; playHole<=board.getNoOfHoles(); playHole++) {
+      if(board.getSeeds(side, playHole) == 0) {
+        continue;
+      }
+
+      Board currentBoard = board.clone();
+      Side newSide = kalah.makeMove(currentBoard, new Move(side, playHole));
+
+      OptimizeResult result;
+      if(currentBoard.previousMoveWasFirst()) {
+        // pie rule, if we got extra move, do not use it, pass the move
+        result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, false);
+      }
+      else {
+        // either pass the move, or use extra move, depending on the side
+        result = alphaBeta(kalah, currentBoard, newSide, depth-1, alpha, beta, ((side == newSide) ? true : false));
+      }
+
+      // record the result
+      optimizedMoves.add(new OptimizedMove(playHole, result.score));
+    }
+
+    Collections.sort(optimizedMoves);
+
+    return optimizedMoves;
+  }
+
+  public List<OptimizedMove> getOptimizedMoves(Kalah kalah, Board board,
+                                               Side side, int depth) throws Exception {
+    return doGetOptimizedMoves(kalah, board, side, depth);
   }
 
   public OptimizeResult optimizeNextMove(Kalah kalah,

@@ -1,7 +1,7 @@
 #!/bin/sh
 ManKalah="../external/ManKalah.jar"
 MKAgent="java -jar ../build/MKAgent.jar"
-MKRefAgent="java -jar /opt/info/courses/COMP34120/Project1_2014/Group2Agent.jar"
+MKRefAgent="java -jar ../external/MKRefAgent.jar"
 
 
 read -p "Who goes first? (MKAgent/MKRefAgent)=" firstAgent

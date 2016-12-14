@@ -114,20 +114,24 @@ public class Main
     Side turn = firstToMove;
     boolean prevTurn = false;
     boolean canSwap = false;
+    boolean agentToMoveFirst = false;
 
     try {
       mySide = readSideFromStartMsg();
 
       canSwap = mySide != firstToMove;
 
-      KalahPlayer player = new KalahPlayer(mySide, kalah);
+      agentToMoveFirst = mySide == firstToMove;
+
+      KalahPlayer player = new KalahPlayer(mySide, kalah, BoardEvaluatorFactory.getEvaluator());
 
       while(!kalah.gameOver()) {
         prevTurn = false;
 
         if(mySide == turn) {
           // make move
-          sendMsg(Protocol.createMoveMsg(player.makeMove()));
+          sendMsg(Protocol.createMoveMsg(player.decideAndMakeNextMove(agentToMoveFirst)));
+          agentToMoveFirst = false;
           prevTurn = true;
         }
 

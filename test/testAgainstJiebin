@@ -1,0 +1,13 @@
+#!/bin/sh
+ManKalah="../external/ManKalah.jar"
+MKAgent="java -jar ../build/MKAgent.jar"
+JiebinAgent="java -jar ../external/KalahRNGesus.jar"
+
+
+read -p "Who goes first? (MKAgent/JiebinAgent)=" firstAgent
+
+case $firstAgent in
+  MKAgent ) java -jar $ManKalah "$MKAgent" "$JiebinAgent"; break;;
+  JiebinAgent ) java -jar $ManKalah "$JiebinAgent" "$MKAgent"; break;;
+  * ) echo "Please answer MKAgent or JiebinAgent";;
+esac
