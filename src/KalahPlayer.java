@@ -82,9 +82,6 @@ public class KalahPlayer {
       }
     }
 
-    OptimizedMove nextMove = optimizedMoves.get(0);
-    Logger.INSTANCE.info(String.format("Making move: %d", nextMove.hole()));
-
     return optimizedMoves.get(0);
   }
 

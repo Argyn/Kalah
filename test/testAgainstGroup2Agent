@@ -1,0 +1,14 @@
+#!/bin/sh
+ManKalah="../external/ManKalah.jar"
+OpposingAgent="Group2Agent"
+Agent1="java -jar ../build/MKAgent.jar"
+Agent2="java -jar ../external/$OpposingAgent.jar"
+
+
+read -p "Who goes first? (MKAgent/$OpposingAgent)=" firstAgent
+
+case $firstAgent in
+  MKAgent ) java -jar $ManKalah "$Agent1" "$Agent2"; break;;
+  $OpposingAgent ) java -jar $ManKalah "$Agent2" "$Agent1"; break;;
+  * ) echo "Please answer MKAgent or $OpposingAgent";;
+esac
